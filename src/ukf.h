@@ -17,7 +17,7 @@ public:
   bool is_initialized_;
 
   ///* if this is false, laser measurements will be ignored (except for init)
-  bool use_laser_;
+  bool use_lidar_;
 
   ///* if this is false, radar measurements will be ignored (except for init)
   bool use_radar_;
