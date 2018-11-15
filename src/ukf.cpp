@@ -13,7 +13,7 @@ using std::vector;
  */
 UKF::UKF() {
     // if this is false, lidar measurements will be ignored (except during init)
-    use_lidar_ = false;
+    use_lidar_ = true;
 
     // if this is false, radar measurements will be ignored (except during init)
     use_radar_ = true;
@@ -167,21 +167,21 @@ void UKF::Prediction(double delta_t) {
     // create sigma point matrix
     MatrixXd Xsig_aug = MatrixXd(n_aug_, 2 * n_aug_ + 1);
 
-    //create augmented mean state
+    // create augmented mean state
     x_aug.head(n_x_) = x_;
     x_aug(5) = 0;
     x_aug(6) = 0;
 
-    //create augmented covariance matrix
+    // create augmented covariance matrix
     P_aug.fill(0.0);
     P_aug.topLeftCorner(n_x_, n_x_) = P_;
     P_aug(5, 5) = std_a_ * std_a_;
     P_aug(6, 6) = std_yawdd_ * std_yawdd_;
 
-    //create square root matrix
+    // create square root matrix
     MatrixXd L = P_aug.llt().matrixL();
 
-    //create augmented sigma points
+    // create augmented sigma points
     Xsig_aug.col(0) = x_aug;
     for (int i = 0; i < n_aug_; i++) {
         Xsig_aug.col(i + 1) = x_aug + sqrt(lambda_ + n_aug_) * L.col(i);
@@ -274,6 +274,22 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 
     You'll also need to calculate the lidar NIS.
     */
+    VectorXd z = meas_package.raw_measurements_;
+    MatrixXd H(2, n_x_);
+    H << 1, 0, 0, 0, 0,
+         0, 1, 0, 0, 0;
+    MatrixXd R(2, 2);
+    R << std_laspx_ * std_laspx_, 0,
+         0, std_laspy_ * std_laspy_;
+
+    VectorXd y = z - H * x_;
+    MatrixXd Ht = H.transpose();
+    MatrixXd S = H * P_ * Ht + R;
+    MatrixXd Si = S.inverse();
+    MatrixXd K = P_ * Ht * Si;
+    x_ = x_ + (K * y);
+    MatrixXd I = MatrixXd::Identity(n_x_, n_x_);
+    P_ = (I - K * H) * P_;
 }
 
 /**
@@ -298,7 +314,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     // create matrix for sigma points in measurement space
     MatrixXd Zsig = MatrixXd(n_z, 2 * n_aug_ + 1);
 
-    //transform sigma points into measurement space
+    // transform sigma points into measurement space
     for (int i = 0; i < 2 * n_aug_ + 1; i++) {
 
         double p_x = Xsig_pred_(0, i);
