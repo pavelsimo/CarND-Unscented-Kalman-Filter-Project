@@ -38,3 +38,9 @@ void Tools::NormalizeAngle(double &angle) {
     while (angle > M_PI) angle -= 2. * M_PI;
     while (angle < -M_PI) angle += 2. * M_PI;
 }
+
+double Tools::NIS(const MatrixXd &S, const VectorXd &z_pred, const VectorXd &z) {
+    VectorXd z_diff = z - z_pred;
+    double res = z_diff.transpose() * S.inverse() * z_diff;
+    return res;
+}

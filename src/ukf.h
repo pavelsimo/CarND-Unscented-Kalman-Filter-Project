@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <iostream>
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -67,6 +68,11 @@ public:
   ///* Sigma point spreading parameter
   double lambda_;
 
+  ///* NIS result from the last measurement
+  double nis_;
+
+  ///* if this is false, the NIS measurements will not be printed to stderr
+  bool use_nis_;
 
   /**
    * Constructor
