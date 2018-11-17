@@ -1,4 +1,4 @@
-# Unscented Kalman Filter Project Starter Code
+# Unscented Kalman Filter Project
 
 In this project utilize an Unscented Kalman Filter to estimate the state 
 of a moving object of interest with noisy lidar and radar measurements. 
