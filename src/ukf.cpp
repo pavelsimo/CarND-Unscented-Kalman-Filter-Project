@@ -73,7 +73,7 @@ UKF::UKF() {
 
     // custom variables
 
-    use_nis_ = true;
+    use_nis_ = false;
     nis_ = 0;
     if (use_nis_) {
         cerr << "sensor_type" << "," << "timestamp" << "," << "nis" << '\n';
